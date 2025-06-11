@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <h2 class="mb-4">Choose Your Subscription Plan</h2>
+            <div class="card shadow-lg">
+                <div class="card-body">
+                    <h3 class="card-title pricing-card-title">$10<small class="text-muted fw-light">/month</small></h3>
+                    <ul class="list-unstyled mt-3 mb-4">
+                        <li>Full CRM Access</li>
+                        <li>Lead Management</li>
+                        <li>Analytics Dashboard</li>
+                        <li>Customer Support</li>
+                    </ul>
+                    {% if subscription and subscription.is_valid %}
+                        <div class="alert alert-success">
+                            Your subscription is active until {{ subscription.end_date|date:"F j, Y" }}
+                        </div>
+                        <button class="btn btn-primary" disabled>Currently Subscribed</button>
+                    {% else %}
+                        <form action="{% url 'checkout-session' %}" method="POST">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-primary btn-lg">Subscribe Now</button>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        border: none;
+        border-radius: 15px;
+        transition: transform 0.3s;
+    }
+    
+    .card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .btn-primary {
+        padding: 12px 30px;
+        border-radius: 30px;
+        font-weight: 600;
+    }
+    
+    .pricing-card-title {
+        font-size: 2.5rem;
+        font-weight: 600;
+        color: #2563eb;
+    }
+    
+    .list-unstyled li {
+        padding: 8px 0;
+        font-size: 1.1rem;
+    }
+    
+    @media (max-width: 768px) {
+        .container {
+            padding: 1rem;
+        }
+        
+        .pricing-card-title {
+            font-size: 2rem;
+        }
+        
+        .list-unstyled li {
+            font-size: 1rem;
+        }
+    }
+</style>
+{% endblock %}

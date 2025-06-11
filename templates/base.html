@@ -1,0 +1,186 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Leads</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --primary-bg: #1a237e;
+            --hover-bg: #283593;
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --transition-speed: 0.3s;
+            --sidebar-width: 220px;
+            --sidebar-collapsed-width: 80px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa;
+            transition: all var(--transition-speed) ease;
+        }
+
+        .sidenav {
+            height: 100%;
+            width: var(--sidebar-collapsed-width);
+            position: fixed;
+            top: 0;
+            left: 0;
+            background: var(--primary-bg);
+            overflow-y: auto;
+            scrollbar-width: none;
+            transition: width var(--transition-speed) ease;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding-top: 1rem;
+        }
+
+        .sidenav::-webkit-scrollbar {
+            display: none;
+        }
+
+        .sidenav:hover {
+            width: var(--sidebar-width);
+        }
+
+        .sidenav h6 {
+            color: var(--text-primary);
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            text-transform: uppercase;
+            font-weight: 600 !important;
+            transition: opacity var(--transition-speed) ease;
+            opacity: 0;
+            white-space: nowrap;
+        }
+
+        .sidenav:hover h6 {
+            opacity: 1;
+        }
+
+        .sidenav a {
+            padding: 12px 15px;
+            text-decoration: none;
+            font-size: 1rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            border-radius: 8px;
+            margin: 6px 10px;
+            transition: all var(--transition-speed) ease;
+            white-space: nowrap;
+        }
+
+        .sidenav a i {
+            min-width: 30px;
+            margin-right: 0.75rem;
+            text-align: center;
+            font-size: 1.2rem;
+        }
+
+        .sidenav a span {
+            opacity: 0;
+            transition: opacity 0.2s ease-in 0.1s;
+            font-weight: 500;
+        }
+
+        .sidenav:hover a span {
+            opacity: 1;
+        }
+
+        .sidenav a:hover,
+        .sidenav a.active {
+            background-color: var(--hover-bg);
+            color: var(--text-primary);
+        }
+
+        .main {
+            margin-left: var(--sidebar-collapsed-width);
+            padding: 1.5rem;
+            transition: margin-left var(--transition-speed) ease;
+            min-height: 100vh;
+        }
+
+        .sidenav:hover~.main {
+            margin-left: var(--sidebar-width);
+        }
+
+        .content-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        @media screen and (max-width: 768px) {
+            .sidenav {
+                width: 80px;
+            }
+
+            .sidenav:hover {
+                width: 180px;
+            }
+
+            .sidenav:hover~.main {
+                margin-left: 180px;
+            }
+
+            .main {
+                margin-left: 80px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="sidenav">
+        <a href="{% url 'LeadCreate' %}" class="{% if request.path == '/lead_create/' %}active{% endif %}"><i class="fas fa-plus-circle"></i><span>Lead Create</span></a>
+        <a href="{% url 'view_leads' %}" class="{% if request.path == '/view_leads/' %}active{% endif %}"><i class="fas fa-eye"></i><span>View Leads</span></a>
+        <a href="{% url 'dashboard' %}" class="{% if request.path == '/dashboard/' %}active{% endif %}"><i class="fas fa-chart-line"></i><span>Dashboard</span></a>
+        <a href="{% url 'Report' %}" class="{% if request.path == '/leads_report/' %}active{% endif %}"><i class="fas fa-file-alt"></i><span>Reports</span></a>
+
+        <h6>Calls</h6>
+        <a href="{% url 'call_history' %}" class="{% if request.path == '/calls/history/' %}active{% endif %}"><i class="fas fa-history"></i><span>Call History</span></a>
+        <a href="{% url 'call_analytics' %}" class="{% if request.path == '/calls/analytics/' %}active{% endif %}"><i class="fas fa-chart-bar"></i><span>Call Analytics</span></a>
+        <a href="{% url 'call_topper' %}" class="{% if request.path == '/calls/topper/' %}active{% endif %}"><i class="fas fa-trophy"></i><span>Call Topper</span></a>
+
+        <h6>Field Sales</h6>
+        <a href="{% url 'maps' %}" class="{% if request.path == '/maps/' %}active{% endif %}"><i class="fas fa-map-marked-alt"></i><span>Maps</span></a>
+        <h6>WhatsApp</h6>
+        <a href="{% url 'inbox' %}" class="{% if request.path == '/whatsapp/inbox/' %}active{% endif %}"><i class="fas fa-inbox"></i><span>Inbox</span></a>
+        <a href="{% url 'campaigns' %}" class="{% if request.path == '/whatsapp/campaigns/' %}active{% endif %}"><i class="fas fa-bullhorn"></i><span>Campaigns</span></a>
+        <a href="{% url 'automation' %}" class="{% if request.path == '/whatsapp/automation/' %}active{% endif %}"><i class="fas fa-robot"></i><span>Automation</span></a>
+
+        <h6>Subscription</h6>
+        <a href="{% url 'subscription_page' %}" class="{% if request.path == '/subscription/' %}active{% endif %}">
+            <i class="fas fa-credit-card"></i>
+            <span>Subscription</span>
+            {% if user.subscription and user.subscription.is_valid %}
+            <span class="badge bg-success ms-2">Active</span>
+            {% else %}
+            <span class="badge bg-warning text-dark ms-2">Inactive</span>
+            {% endif %}
+        </a>
+
+        {% if user.is_authenticated %}
+        <h6>User</h6>
+        <a href="{% url 'user_profile' %}" class="{% if request.path == '/user_profile/' %}active{% endif %}"><i class="fas fa-user"></i><span>Profile</span></a>
+        <a href="{% url 'logout' %}" class="{% if request.path == '/logout/' %}active{% endif %}"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
+        {% endif %}
+    </div>
+
+    <div class="main">
+        <div class="content-card">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </div>
+</body>
+
+</html>

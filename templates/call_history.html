@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Call History</h2>
+    <form method="GET" class="mb-4">
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <input type="text" name="q" value="{{ query }}" class="form-control" placeholder="Search calls...">
+            </div>
+            <div class="col-md-3 mb-3">
+                <input type="date" name="start_date" value="{{ start_date|date:'Y-m-d' }}" class="form-control" placeholder="Start Date">
+            </div>
+            <div class="col-md-3 mb-3">
+                <input type="date" name="end_date" value="{{ end_date|date:'Y-m-d' }}" class="form-control" placeholder="End Date">
+            </div>
+            <div class="col-md-2 mb-3">
+                <button type="submit" class="btn btn-primary w-100">Filter</button>
+            </div>
+        </div>
+        <a href="?{% if query %}q={{ query }}&{% endif %}{% if start_date %}start_date={{ start_date|date:'Y-m-d' }}&{% endif %}{% if end_date %}end_date={{ end_date|date:'Y-m-d' }}&{% endif %}export=csv" class="btn btn-secondary mb-3">Export to CSV</a>
+    </form>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Contact Name</th>
+                    <th>Caller</th>
+                    <th>Call Time</th>
+                    <th>Duration (min)</th>
+                    <th>Status</th>
+                    <th>Remarks</th>
+                    {% if role == 'Manager' %}
+                    <th>Owner</th>
+                    {% endif %}
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for call in calls %}
+                <tr>
+                    <td>{{ call.contact_name }}</td>
+                    <td>{{ call.caller_name|default:"N/A" }}</td>
+                    <td>{{ call.last_call_time|date:"Y-m-d H:i" }}</td>
+                    <td>{{ call.call_duration|default:"N/A" }}</td>
+                    <td>{{ call.last_call_status|default:"N/A" }}</td>
+                    <td>{{ call.last_call_remarks|default:"N/A" }}</td>
+                    {% if role == 'Manager' %}
+                    <td>{{ call.lead_owner.username }}</td>
+                    {% endif %}
+                    <td><a href="{% url 'update_lead' call.id %}" class="btn btn-sm btn-info">View Lead</a></td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="{% if role == 'Manager' %}8{% else %}7{% endif %}">No calls found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% if calls.has_other_pages %}
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            {% if calls.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page={{ calls.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if start_date %}&start_date={{ start_date|date:'Y-m-d' }}{% endif %}{% if end_date %}&end_date={{ end_date|date:'Y-m-d' }}{% endif %}">Previous</a></li>
+            {% endif %}
+            {% for num in calls.paginator.page_range %}
+            <li class="page-item {% if calls.number == num %}active{% endif %}"><a class="page-link" href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}{% if start_date %}&start_date={{ start_date|date:'Y-m-d' }}{% endif %}{% if end_date %}&end_date={{ end_date|date:'Y-m-d' }}{% endif %}">{{ num }}</a></li>
+            {% endfor %}
+            {% if calls.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ calls.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if start_date %}&start_date={{ start_date|date:'Y-m-d' }}{% endif %}{% if end_date %}&end_date={{ end_date|date:'Y-m-d' }}{% endif %}">Next</a></li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,436 @@
+{% extends 'base.html' %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Leads</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+        <style>
+            :root {
+                --primary-color: #4f46e5;
+                --secondary-color: #0ea5e9;
+                --success-color: #10b981;
+                --warning-color: #f59e0b;
+            }
+        
+            body {
+                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                min-height: 100vh;
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            }
+        
+            .container {
+                background: rgba(255, 255, 255, 0.9);
+                backdrop-filter: blur(10px);
+                border-radius: 20px;
+                box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+                border: 1px solid rgba(255, 255, 255, 0.18);
+                padding: 2rem;
+                margin-top: 30px;
+                transition: transform 0.3s ease;
+            }
+        
+            .container:hover {
+                transform: translateY(-5px);
+            }
+        
+            h3, h4 {
+                color: var(--primary-color);
+                font-weight: 600 !important;
+                margin-bottom: 1.5rem;
+                background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+        
+            .nav-tabs {
+                border-bottom: 2px solid #e2e8f0;
+                margin-bottom: 2rem;
+            }
+        
+            .nav-tabs .nav-link {
+                border: none;
+                color: #64748b;
+                padding: 1rem 1.5rem;
+                transition: all 0.3s ease;
+                position: relative;
+            }
+        
+            .nav-tabs .nav-link.active {
+                color: var(--primary-color);
+                background: none;
+                font-weight: 600;
+            }
+        
+            .nav-tabs .nav-link.active::after {
+                content: '';
+                position: absolute;
+                bottom: -2px;
+                left: 0;
+                width: 100%;
+                height: 2px;
+                background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            }
+        
+            .form-control {
+                border-radius: 10px;
+                border: 2px solid #e2e8f0;
+                padding: 0.75rem 1rem;
+                transition: all 0.3s ease;
+                background: rgba(255, 255, 255, 0.9);
+            }
+        
+            .form-control:focus {
+                border-color: var(--primary-color);
+                box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+                transform: translateY(-2px);
+            }
+        
+            .form-label {
+                font-weight: 500;
+                color: #4a5568;
+                margin-bottom: 0.5rem;
+            }
+        
+            .btn {
+                border-radius: 10px;
+                padding: 0.75rem 1.5rem;
+                font-weight: 600;
+                transition: all 0.3s ease;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+        
+            .btn-primary {
+                background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+                border: none;
+            }
+        
+            .btn-warning {
+                background: linear-gradient(135deg, var(--warning-color), #f97316);
+                border: none;
+                color: white;
+            }
+        
+            .btn-secondary {
+                background: linear-gradient(135deg, #64748b, #475569);
+                border: none;
+                color: white;
+            }
+        
+            .btn:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 7px 14px rgba(50, 50, 93, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08);
+            }
+        
+            .section-header {
+                background: linear-gradient(to right, rgba(79, 70, 229, 0.1), transparent);
+                padding: 1rem;
+                border-radius: 10px;
+                margin: 2rem 0 1rem;
+            }
+        
+            textarea {
+                min-height: 100px;
+            }
+        
+            #last-call-info {
+                animation: slideDown 0.3s ease;
+            }
+        
+            @keyframes slideDown {
+                from { opacity: 0; transform: translateY(-10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+        
+            /* Responsive Design */
+            @media (max-width: 768px) {
+                .container {
+                    padding: 1rem;
+                    margin-top: 15px;
+                }
+                
+                .btn {
+                    width: 100%;
+                    margin: 0.5rem 0;
+                }
+            }
+        </style>
+        <style>
+            .is-invalid {
+                border-color: #dc3545;
+            }
+            .error-message {
+                font-size: 0.875rem;
+            }
+        </style>
+</head>
+
+<body>
+    {% block content %}
+    <h3 class="text-center mb-4">Create Lead</h3>
+    <div class="container">
+   
+        
+        
+
+        <!-- Lead Creation Form -->
+        <form method="POST" action="{% url 'LeadCreate' %}">
+            {% csrf_token %}
+
+
+
+            <h4>Lead Title</h4>
+        <input type="text" class="form-control" id="Lead_titile" name="lead_title" required>
+        <br>
+
+        <h3>Lead info</h3>
+            <div class="row">
+                <div class="col-md-6 pb-3">
+                    <label for="contact_name" class="form-label">Contact Name</label>
+                    <input type="text" class="form-control" id="contact_name" name="contact_name" required>
+                </div>
+                <div class="col-md-6 pb-3">
+                    <label for="mobile_number" class="form-label">Mobile Number</label>
+                    <input type="text" class="form-control" id="mobile_number" name="mobile_number" required>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 pb-3">
+                    <label for="alternate_number" class="form-label">Alternate Number</label>
+                    <input type="text" class="form-control" id="alternate_number" name="alternate_number">
+                </div>
+                <div class="col-md-6 pb-3">
+                    <label for="email_address" class="form-label">Email Address</label>
+                    <input type="email" class="form-control" id="email_address" name="email_address" required>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 pb-3">
+                    <label for="lead_stage" class="form-label">Lead Stage</label>
+                    <select class="form-control" id="lead_stage" name="lead_stage" required>
+                        <option value="NEW" selected>New</option>
+                        <option value="CONTACTED">Contacted</option>
+                        <option value="HOT">Hot</option>
+                        <option value="FOLLOW_UP">Follow Up</option>
+                        <option value="CLOSED_WON">Closed Won</option>
+                        <option value="CLOSED_LOST">Closed Lost</option>
+                    </select>
+                </div>
+                <div class="col-md-6 pb-3">
+                    <label for="lead_revenue" class="form-label">Lead Revenue</label>
+                    <input type="text" class="form-control" id="lead_revenue" name="lead_revenue" required>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 pb-3">
+                    <label for="expected_closing_date" class="form-label">Expected Closing Date</label>
+                    <input type="date" class="form-control" id="expected_closing_date" name="expected_closing_date" required>
+                </div>
+                <div class="col-md-6 pb-3">
+                    <label for="lead_owner" class="form-label">Lead Owner</label>
+                    <input type="text" class="form-control" id="lead_owner" name="lead_owner" 
+                           value="{{ user_name }}" required readonly 
+                           onclick="this.removeAttribute('readonly');">
+                    <small class="text-muted">Click to edit if needed</small>
+                </div>
+                
+            </div>
+
+            <!-- Next Follow-Up Info -->
+            <h3>Next Follow Up Info</h3>
+            <div class="row">
+                <div class="col-md-6 pb-3">
+                    <label for="Follow_Up" class="form-label">Next Follow-Up on</label>
+                    <input type="date" class="form-control" id="Follow_Up" name="Follow_Up">
+                </div>
+                <div class="col-md-6 pb-3">
+                    <label for="Follow_Up_Notes" class="form-label">Next Follow-Up Notes</label>
+                    <input type="text" class="form-control" id="Follow_Up_Notes" name="Follow_Up_Notes">
+                </div>
+                <div class="col-md-12 pb-3">
+                    <label for="textarea" class="form-label">Additional Notes</label>
+                    <textarea id="textarea" name="textarea" class="form-control"></textarea>
+                </div>
+            </div>
+
+            <!-- Source Info -->
+            <h3>Source Info</h3>
+            <div class="row">
+                <div class="col-md-5 pb-3">
+                    <label for="campaign_name" class="form-label">Campaign Name</label>
+                    <input type="text" class="form-control" id="campaign_name" name="campaign_name">
+                </div>
+                <div class="col-md-5 pb-3">
+                    <label for="campaign_content" class="form-label">Campaign Content</label>
+                    <input type="text" class="form-control" id="campaign_content" name="campaign_content">
+                </div>
+                <div class="col-md-5 pb-3">
+                    <label for="campaign_terms" class="form-label">Campaign Terms</label>
+                    <input type="text" class="form-control" id="campaign_terms" name="campaign_terms">
+                </div>
+            </div>
+
+            <!-- Last Call Info -->
+            <button type="button" class="btn btn-secondary mb-3" id="toggle-call-info"> Show Call Info</button>
+            <div id="last-call-info" style="display: none;">
+                <h3>Last Call Info</h3>
+                <div class="row">
+                    <div class="col-md-4 pb-3">
+                        <label for="caller_name" class="form-label">Caller Name</label>
+                        <input type="text" class="form-control" id="caller_name" name="caller_name">
+                    </div>
+                    <div class="col-md-4 pb-3">
+                        <label for="call_duration" class="form-label">Call Duration</label>
+                        <input type="text" class="form-control" id="call_duration" name="call_duration" >
+                    </div>
+                    <div class="col-md-4 pb-3">
+                        <label for="reason_not_connected" class="form-label">Reason for Not Connected</label>
+                        <input type="text" class="form-control" id="reason_not_connected" name="reason_not_connected">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 pb-3">
+                        <label for="contact_reference" class="form-label">Contact Reference</label>
+                        <input type="text" class="form-control" id="contact_reference" name="contact_reference" >
+                    </div>
+                    <div class="col-md-4 pb-3">
+                        <label for="last_call_time" class="form-label">Last Call Time</label>
+                        <input type="datetime-local" class="form-control" id="last_call_time" name="last_call_time"  >
+                    </div>
+                    <div class="col-md-4 pb-3">
+                        <label for="last_call_status" class="form-label">Last Call Status</label>
+                        <input type="text" class="form-control" id="last_call_status" name="last_call_status" >
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 pb-3">
+                        <label for="last_call_remarks" class="form-label">Last Call Remarks</label>
+                        <textarea id="last_call_remarks" name="last_call_remarks" class="form-control"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Buttons -->
+            <div class="form-buttons">
+                <button type="submit" class="btn btn-primary">Submit</button>
+                <button type="reset" class="btn btn-warning">Reset</button>
+            </div>
+        </form>
+    </div>
+    <script>
+        document.getElementById("toggle-call-info").addEventListener("click", function () {
+            const callInfo = document.getElementById("last-call-info");
+            callInfo.style.display = callInfo.style.display === "none" ? "block" : "none";
+        });
+    </script>
+    <script>
+        document.querySelector("form").addEventListener("submit", function (event) {
+            let isValid = true;
+            const requiredFields = document.querySelectorAll("[required]");
+            const numericFields = document.querySelectorAll("[type='text'][name='mobile_number'], [name='alternate_number'], [name='lead_revenue']");
+            const dateFields = document.querySelectorAll("[type='date'], [type='datetime-local']");
+
+            // Validate required fields
+            requiredFields.forEach(field => {
+                const errorElement = field.nextElementSibling;
+                if (!field.value.trim()) {
+                    isValid = false;
+                    field.classList.add("is-invalid");
+                    if (errorElement && errorElement.classList.contains("error-message")) {
+                        errorElement.textContent = "This field is required.";
+                    } else {
+                        const error = document.createElement("div");
+                        error.className = "error-message text-danger mt-1";
+                        error.textContent = "This field is required.";
+                        field.parentNode.appendChild(error);
+                    }
+                } else {
+                    field.classList.remove("is-invalid");
+                    if (errorElement && errorElement.classList.contains("error-message")) {
+                        errorElement.textContent = "";
+                    }
+                }
+            });
+
+            // Validate numeric fields
+            numericFields.forEach(field => {
+                const errorElement = field.nextElementSibling;
+                if (field.value.trim() && isNaN(field.value)) {
+                    isValid = false;
+                    field.classList.add("is-invalid");
+                    if (errorElement && errorElement.classList.contains("error-message")) {
+                        errorElement.textContent = "Please enter a valid number.";
+                    } else {
+                        const error = document.createElement("div");
+                        error.className = "error-message text-danger mt-1";
+                        error.textContent = "Please enter a valid number.";
+                        field.parentNode.appendChild(error);
+                    }
+                } else {
+                    field.classList.remove("is-invalid");
+                    if (errorElement && errorElement.classList.contains("error-message")) {
+                        errorElement.textContent = "";
+                    }
+                }
+            });
+
+            // Validate date fields
+            dateFields.forEach(field => {
+                const errorElement = field.nextElementSibling;
+                if (field.type === "datetime-local" && field.value.trim()) {
+                    const dateTimeRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/;
+                    if (!dateTimeRegex.test(field.value)) {
+                        isValid = false;
+                        field.classList.add("is-invalid");
+                        if (errorElement && errorElement.classList.contains("error-message")) {
+                            errorElement.textContent = "Please enter a valid date and time (YYYY-MM-DDTHH:MM).";
+                        } else {
+                            const error = document.createElement("div");
+                            error.className = "error-message text-danger mt-1";
+                            error.textContent = "Please enter a valid date and time (YYYY-MM-DDTHH:MM).";
+                            field.parentNode.appendChild(error);
+                        }
+                    } else {
+                        field.classList.remove("is-invalid");
+                        if (errorElement && errorElement.classList.contains("error-message")) {
+                            errorElement.textContent = "";
+                        }
+                    }
+                } else if (field.type === "date" && field.value.trim() && isNaN(Date.parse(field.value))) {
+                    isValid = false;
+                    field.classList.add("is-invalid");
+                    if (errorElement && errorElement.classList.contains("error-message")) {
+                        errorElement.textContent = "Please enter a valid date.";
+                    } else {
+                        const error = document.createElement("div");
+                        error.className = "error-message text-danger mt-1";
+                        error.textContent = "Please enter a valid date.";
+                        field.parentNode.appendChild(error);
+                    }
+                } else {
+                    field.classList.remove("is-invalid");
+                    if (errorElement && errorElement.classList.contains("error-message")) {
+                        errorElement.textContent = "";
+                    }
+                }
+            });
+
+            if (!isValid) {
+                event.preventDefault(); // Prevent form submission if validation fails
+            }
+        });
+    </script>
+    {% endblock %}
+</body>
+
+</html>

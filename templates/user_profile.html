@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">User Profile</h2>
+    {% if messages %}
+    <div class="alert alert-info">
+        {% for message in messages %}
+        {{ message }}
+        {% endfor %}
+    </div>
+    {% endif %}
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    {% if user_profile.profile_picture %}
+                    <img src="{{ user_profile.profile_picture.url }}" class="img-fluid rounded-circle mb-3" style="max-width: 150px;" alt="Profile Picture">
+                    {% else %}
+                    <img src="{% static 'images/default_profile.png' %}" class="img-fluid rounded-circle mb-3" style="max-width: 150px;" alt="Default Profile Picture">
+                    {% endif %}
+                    <h5>{{ user.username }}</h5>
+                    <p>{{ user.email }}</p>
+                    <p>{{ user_profile.companyname|default:"N/A" }}</p>
+                    <p><strong>Role:</strong> {{ user_profile.role }}</p>
+                    {% if user_profile.reports_to %}
+                    <p><strong>Reports to:</strong> {{ user_profile.reports_to.username }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Update Profile</h5>
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="username" name="username" value="{{ user.username }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="companyname" class="form-label">Company Name</label>
+                            <input type="text" class="form-control" id="companyname" name="companyname" value="{{ user_profile.companyname|default_if_none:'' }}">
+                        </div>
+                        <div class="mb-3">
+                            <label for="role" class="form-label">Role</label>
+                            <select class="form-select" id="role" name="role">
+                                <option value="Manager" {% if user_profile.role == 'Manager' %}selected{% endif %}>Manager</option>
+                                <option value="Member" {% if user_profile.role == 'Member' %}selected{% endif %}>Member</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="profile_picture" class="form-label">Profile Picture</label>
+                            <input type="file" class="form-control" id="profile_picture" name="profile_picture" accept="image/*">
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">New Password (leave blank to keep current)</label>
+                            <input type="password" class="form-control" id="password" name="password">
+                        </div>
+                        <div class="mb-3">
+                            <label for="confirm_password" class="form-label">Confirm New Password</label>
+                            <input type="password" class="form-control" id="confirm_password" name="confirm_password">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Update Profile</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Recent Leads</h5>
+                    <ul class="list-group">
+                        {% for lead in recent_leads %}
+                        <li class="list-group-item">{{ lead.contact_name }} - {{ lead.lead_stage }}</li>
+                        {% empty %}
+                        <li class="list-group-item">No recent leads.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Recent Calls</h5>
+                    <ul class="list-group">
+                        {% for call in recent_calls %}
+                        <li class="list-group-item">{{ call.contact_name }} - {{ call.last_call_time|date:"Y-m-d H:i" }}</li>
+                        {% empty %}
+                        <li class="list-group-item">No recent calls.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% if team_members %}
+    <div class="card mt-4">
+        <div class="card-body">
+            <h5 class="card-title">Team Members</h5>
+            <ul class="list-group">
+                {% for member in team_members %}
+                <li class="list-group-item">{{ member.user.username }} - {{ member.role }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

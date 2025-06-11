@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Call Analytics</h2>
+    <form method="GET" class="mb-4">
+        <div class="row">
+            <div class="col-md-4">
+                <select name="period" class="form-select" onchange="this.form.submit()">
+                    <option value="7" {% if period == '7' %}selected{% endif %}>Last 7 Days</option>
+                    <option value="30" {% if period == '30' %}selected{% endif %}>Last 30 Days</option>
+                    <option value="90" {% if period == '90' %}selected{% endif %}>Last 90 Days</option>
+                </select>
+            </div>
+        </div>
+    </form>
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Total Calls</h5>
+                    <p class="card-text">{{ total_calls }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Average Call Duration (min)</h5>
+                    <p class="card-text">{{ avg_duration }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Success Rate (%)</h5>
+                    <p class="card-text">{{ success_rate }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Calls by Status</h5>
+                    <canvas id="statusChart" height="100"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Calls Over Time</h5>
+                    <canvas id="timeChart" height="100"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const statusCtx = document.getElementById('statusChart').getContext('2d');
+    new Chart(statusCtx, {
+        type: 'bar',
+        data: {
+            labels: {{ status_data.labels|safe }},
+            datasets: [{
+                label: 'Calls by Status',
+                data: {{ status_data.data|safe }},
+                backgroundColor: 'rgba(26, 35, 126, 0.6)',
+                borderColor: 'rgba(26, 35, 126, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Number of Calls'
+                    }
+                }
+            }
+        }
+    });
+
+    const timeCtx = document.getElementById('timeChart').getContext('2d');
+    new Chart(timeCtx, {
+        type: 'line',
+        data: {
+            labels: {{ time_data.labels|safe }},
+            datasets: [{
+                label: 'Calls per Day',
+                data: {{ time_data.data|safe }},
+                backgroundColor: 'rgba(40, 167, 69, 0.2)',
+                borderColor: 'rgba(40, 167, 69, 1)',
+                borderWidth: 2,
+                fill: true
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Number of Calls'
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Date'
+                    }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

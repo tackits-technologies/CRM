@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Call Toppers</h2>
+    <form method="GET" class="mb-4">
+        <div class="row">
+            <div class="col-md-4">
+                <select name="sort_by" class="form-select" onchange="this.form.submit()">
+                    <option value="call_count" {% if sort_by == 'call_count' %}selected{% endif %}>Call Count</option>
+                    <option value="call_duration" {% if sort_by == 'call_duration' %}selected{% endif %}>Call Duration</option>
+                    <option value="revenue" {% if sort_by == 'revenue' %}selected{% endif %}>Revenue</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <a href="?sort_by={{ sort_by }}&export=csv" class="btn btn-secondary w-100">Export to CSV</a>
+            </div>
+        </div>
+    </form>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Top Performers</h5>
+            <canvas id="topChart" height="100"></canvas>
+            <ul class="list-group mt-3">
+                {% for label, value in top_data.labels|zip:top_data.data %}
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    {{ label }}
+                    <span class="badge bg-primary rounded-pill">
+                        {% if sort_by == 'call_duration' %}{{ value|floatformat:0 }} sec{% else %}{{ value }}{% if sort_by == 'revenue' %} ${% endif %}{% endif %}
+                    </span>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('topChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: {{ top_data.labels|safe }},
+            datasets: [{
+                label: '{{ sort_by|title }}',
+                data: {{ top_data.data|safe }},
+                backgroundColor: 'rgba(26, 35, 126, 0.6)',
+                borderColor: 'rgba(26, 35, 126, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: '{{ sort_by|replace:"_"," "|title }}'
+                    }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

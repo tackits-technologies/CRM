@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h3 class="text-center">WhatsApp Campaigns</h3>
+    <div class="card mt-3">
+        <div class="card-body">
+            <form method="POST">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="numbers" class="form-label">Recipient Numbers (comma-separated)</label>
+                    <input type="text" class="form-control" id="numbers" name="numbers" placeholder="+1234567890, +0987654321" required>
+                </div>
+                <div class="mb-3">
+                    <label for="message" class="form-label">Message</label>
+                    <textarea class="form-control" id="message" name="message" rows="4" placeholder="Enter your campaign message" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Send Campaign</button>
+            </form>
+            {% if success %}
+            <div class="alert alert-success mt-3">Campaign sent successfully!</div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

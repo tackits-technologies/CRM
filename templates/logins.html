@@ -1,0 +1,249 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Acme&family=Lobster&display=swap');
+
+    body,
+    html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      font-family: 'Acme', sans-serif;
+      background: linear-gradient(135deg, #4ECDC4, #556270);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      animation: gradientAnimation 8s infinite alternate;
+    }
+
+    @keyframes gradientAnimation {
+      0% {
+        background: linear-gradient(135deg, #4ECDC4, #556270);
+      }
+      100% {
+        background: linear-gradient(135deg, #556270, #4ECDC4);
+      }
+    }
+
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      flex-direction: row-reverse;  /* Changed this line to reverse the order */
+      width: 90%;
+      max-width: 1200px;
+      min-height: 500px;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+      border-radius: 20px;
+      overflow: hidden;
+      background: #fff;
+      margin: 20px;
+    }
+
+    .splitdiv {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+      min-width: 300px;
+    }
+
+    #leftdiv {
+      background-color: #4ECDC4;
+      color: #ffffff;
+      text-align: center;
+    }
+
+    #rightdiv {
+      background-color: #ffffff;
+    }
+
+    #rightdivcard {
+      width: 100%;
+      max-width: 400px;
+      padding: 2rem;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    #rightbutton {
+      background-color: #4ECDC4;
+      border: none;
+      border-radius: 25px;
+      color: #ffffff;
+      padding: 12px 24px;
+      width: 100%;
+      max-width: 200px;
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+      margin-top: 1rem;
+    }
+
+    #rightbutton:hover {
+      background-color: #3BB3A1;
+      transform: scale(1.05);
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    #signupbutton {
+      background-color: #ffffff;
+      border: 2px solid #4ECDC4;
+      border-radius: 25px;
+      color: #4ECDC4;
+      padding: 12px 24px;
+      width: 100%;
+      max-width: 200px;
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+      margin-top: 1rem;
+    }
+
+    #signupbutton:hover {
+      background-color: #4ECDC4;
+      color: #ffffff;
+      transform: scale(1.05);
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    input {
+      width: calc(100% - 24px);
+      padding: 12px;
+      margin: 15px 0;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 16px;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.05);
+    }
+
+    input:focus {
+      border-color: #4ECDC4;
+      outline: none;
+      box-shadow: 0 0 8px rgba(78, 205, 196, 0.5);
+    }
+
+    #leftdiv ul {
+      list-style: none;
+      padding: 0;
+      text-align: left;
+      font-size: clamp(14px, 2.5vw, 18px);
+      margin: 2rem 0;
+    }
+
+    #leftdiv ul li {
+      margin: 1rem 0;
+      display: flex;
+      align-items: center;
+    }
+
+    #leftdiv ul li::before {
+      content: '\2022';
+      color: #ffffff;
+      font-weight: bold;
+      display: inline-block;
+      width: 1em;
+      margin-right: 10px;
+    }
+
+    #img {
+      width: 60%;
+      max-width: 200px;
+      margin-bottom: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    h1 {
+      font-family: 'Lobster', cursive;
+      margin-bottom: 20px;
+      color: #4ECDC4;
+      font-size: clamp(24px, 4vw, 32px);
+    }
+
+    button {
+      font-family: 'Acme', sans-serif;
+      font-size: clamp(16px, 2.5vw, 18px);
+      cursor: pointer;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column-reverse;  /* Changed this line to maintain the desired order on mobile */
+        margin: 10px;
+      }
+
+      .splitdiv {
+        padding: 1.5rem;
+      }
+
+      #leftdiv {
+        padding: 1rem;
+      }
+
+      #rightdivcard {
+        padding: 1.5rem;
+      }
+
+      #img {
+        width: 50%;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        margin: 5px;
+      }
+
+      .splitdiv {
+        padding: 1rem;
+      }
+
+      input {
+        font-size: 14px;
+      }
+
+      #leftdiv ul {
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <form action="{% url 'login' %}" method="POST">
+    {% csrf_token %}
+    <div class="container">
+      <div class="splitdiv" id="rightdiv">
+        <div id="rightdivcard">
+          <h1>Sign In</h1>
+          <input type="text" placeholder="Username" name="username" required />
+          <input type="password" placeholder="Password" name="password" required />
+          <button id="rightbutton">Login</button>
+          <button id="signupbutton" onclick="window.location.href='{% url 'signup' %}'">Sign Up</button>
+        </div>
+      </div>
+
+      <div class="splitdiv" id="leftdiv">
+        <div>
+          <img src="{% static 'image/image.png' %}" alt="image" id="img">
+          <ul>
+            <li>Lead Automation & Management</li>
+            <li>Workflows & Sales Automation</li>
+            <li>Android Dialer & Call Tracking</li>
+            <li>Official WhatsApp API Integration</li>
+            <li>New Integrations (Pabbly, Webhooks)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </form>
+</body>
+
+</html>

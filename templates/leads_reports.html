@@ -1,0 +1,308 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        background: linear-gradient(135deg, #f5f7fb 0%, #e4e8f0 100%);
+    }
+    .report-container {
+        padding: 25px;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        margin: 20px auto;
+        max-width: 1200px;
+        transition: all 0.3s ease;
+    }
+    .report-header {
+        text-align: center;
+        margin-bottom: 30px;
+        padding: 20px;
+        background: linear-gradient(135deg, #3a7bd5 0%, #00d2ff 100%);
+        border-radius: 10px;
+        color: white;
+    }
+    .report-header h3 {
+        margin: 0;
+        font-weight: 600;
+        font-size: 24px;
+    }
+    .report-header p {
+        margin: 5px 0;
+        opacity: 0.9;
+    }
+    .filter-section {
+        background: linear-gradient(to right, #f8f9fa, #ffffff);
+        padding: 15px 20px;
+        border-radius: 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        flex-wrap: wrap;
+    }
+    .date-inputs {
+        display: flex;
+        gap: 12px;
+        align-items: flex-end;
+        flex-wrap: wrap;
+    }
+    .date-group {
+        display: flex;
+        flex-direction: column;
+    }
+    .date-group label {
+        font-size: 12px;
+        color: #516171;
+        margin-bottom: 4px;
+        font-weight: 500;
+    }
+    .date-group input {
+        padding: 6px 12px;
+        border: 1px solid #e0e4e8;
+        border-radius: 6px;
+        font-size: 13px;
+        transition: all 0.2s ease;
+    }
+    .date-group input:focus {
+        outline: none;
+        border-color: #3a7bd5;
+        box-shadow: 0 0 0 2px rgba(58,123,213,0.1);
+    }
+    .btn {
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+    .btn-filter {
+        background: linear-gradient(135deg, #3a7bd5 0%, #00d2ff 100%);
+        color: white;
+        border: none;
+        margin-left: 10px;
+    }
+    .btn-download {
+        background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+        color: white;
+        border: none;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .leads-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        margin: 20px 0;
+        overflow-x: auto;
+    }
+    .leads-table th {
+        background: linear-gradient(to right, #f8f9fa, #ffffff);
+        color: #516171;
+        font-weight: 600;
+        padding: 12px;
+        text-align: left;
+        border-bottom: 2px solid #e0e4e8;
+        font-size: 13px;
+    }
+    .leads-table td {
+        padding: 12px;
+        border-bottom: 1px solid #f0f2f5;
+        color: #516171;
+        font-size: 13px;
+    }
+    .leads-table tr:hover {
+        background-color: #f8f9fa;
+    }
+    .stage-badge {
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 500;
+        display: inline-block;
+    }
+    .stage-new { background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); color: #1976d2; }
+    .stage-contacted { background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); color: #388e3c; }
+    .stage-qualified { background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%); color: #f57c00; }
+    .stage-lost { background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%); color: #d32f2f; }
+    .empty-state {
+        text-align: center;
+        padding: 40px;
+        color: #95a5a6;
+    }
+    .empty-state i {
+        margin-bottom: 10px;
+        opacity: 0.5;
+    }
+
+    @media (max-width: 768px) {
+        .filter-section {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .date-inputs {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+        }
+        .btn-filter {
+            margin-left: 0;
+            margin-top: 10px;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .report-container {
+            padding: 15px;
+        }
+        .report-header h3 {
+            font-size: 20px;
+        }
+        .report-header p {
+            font-size: 14px;
+        }
+        .leads-table th, .leads-table td {
+            font-size: 12px;
+            padding: 8px;
+        }
+    }
+</style>
+
+
+
+<div class="report-container">
+    <div class="report-header">
+        <h3>Leads Report</h3>
+        <p>User: {{ user.username }}</p>
+    </div>
+
+    <div class="filter-section">
+        <form method="get" class="date-inputs">
+            <div class="date-group">
+                <label for="start_date">Start Date:</label>
+                <input type="date" id="start_date" name="start_date" value="{{ start_date|date:'Y-m-d' }}">
+            </div>
+            <div class="date-group">
+                <label for="end_date">End Date:</label>
+                <input type="date" id="end_date" name="end_date" value="{{ end_date|date:'Y-m-d' }}">
+            </div>
+            <button type="submit" class="btn btn-filter">Filter</button>
+        </form>
+        
+        <button class="btn btn-download" onclick="generatePDF()">
+            <i class="fas fa-download"></i> Download PDF
+        </button>
+    </div>
+
+    <div class="table-responsive">
+        <table class="leads-table" id="leads-table">
+            <thead>
+                <tr>
+                    <th>Lead Owner</th>
+                    <th>Contact Name</th>
+                    <th>Mobile Number</th>
+                    <th>Lead Stage</th>
+                    <th>Expected Revenue</th>
+                    <th>Next Follow-Up On</th>
+                    <th>Next Follow-Up Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for lead in leads %}
+                <tr>
+                    <td>{{ lead.lead_owner }}</td>
+                    <td>{{ lead.contact_name }}</td>
+                    <td>{{ lead.mobile_number }}</td>
+                    <td>
+                        <span class="stage-badge stage-{{ lead.lead_stage|lower }}">
+                            {{ lead.lead_stage }}
+                        </span>
+                    </td>
+                    <td>₹{{ lead.lead_revenue }}</td>
+                    <td>{{ lead.follow_up_date }}</td>
+                    <td>{{ lead.follow_up_notes }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="7" class="empty-state">
+                        <i class="fas fa-inbox fa-2x"></i>
+                        <p>No leads available for the selected period</p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script src="https://kit.fontawesome.com/your-font-awesome-kit.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+<script>
+    async function generatePDF() {
+    const { jsPDF } = window.jspdf;
+
+    // Create a new PDF instance
+    const doc = new jsPDF();
+
+    // Add title and user info
+    doc.setFontSize(16);
+    doc.text('Leads Report', 105, 10, null, null, 'center');
+    doc.setFontSize(12);
+    doc.text(`User: {{ user.username }}`, 105, 20, null, null, 'center');
+
+    // Add date range info
+    const startDate = document.getElementById('start_date').value;
+    const endDate = document.getElementById('end_date').value;
+    if (startDate && endDate) {
+        doc.text(`Date Range: ${startDate} to ${endDate}`, 105, 30, null, null, 'center');
+    } else {
+        doc.text('Date Range: All Records', 105, 30, null, null, 'center');
+    }
+
+    // Prepare the table for autoTable
+    const table = document.getElementById('leads-table');
+    const rows = Array.from(table.rows);
+
+    // Extract table data (filter out empty states)
+    const data = rows.map((row, index) => {
+        if (!row.classList.contains('empty-state')) {
+            return Array.from(row.cells).map(cell => cell.innerText);
+        }
+    }).filter(row => row); // Remove undefined rows
+
+    // Add the table to the PDF using autoTable
+    doc.autoTable({
+        head: [data[0]], // Header row
+        body: data.slice(1), // Filtered table rows
+        startY: 40,
+        theme: 'striped', // Optional: Change table style
+        styles: {
+            fontSize: 10,
+            cellPadding: 3,
+        },
+        headStyles: {
+            fillColor: [58, 123, 213], 
+            textColor: 255, 
+        }
+    });
+    const fileName = startDate && endDate
+        ? `Leads_Report_${startDate}_to_${endDate}.pdf`
+        : 'Leads_Report_All.pdf';
+
+    doc.save(fileName);
+}
+
+    
+</script>
+{% endblock %}

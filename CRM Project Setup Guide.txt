@@ -1,0 +1,96 @@
+CRM Project Setup Guide
+ 1. Prerequisites
+
+- Python 3.10+
+- pip (Python package manager)
+- MySQL Server (5.7+ recommended)
+- Git
+- Virtualenv (recommended)
+- Stripe account (for payment integration)
+
+
+
+2. Clone the Project
+
+
+git clone <your-repo-url>
+cd <project-folder>
+
+3. Set Up Virtual Environment
+
+python -m venv venv
+
+#On Windows:
+venv\Scripts\activate
+
+#On Linux/Mac:
+source venv/bin/activate
+
+4 Install Dependencies
+
+pip install -r requirements.txt
+
+5 MySQL Configuration
+
+CREATE DATABASE leads
+
+Update settings.py:
+	DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'crm_db',
+        'USER': 'crm_user',
+        'PASSWORD': 'your_password',
+        'HOST': 'localhost',
+        'PORT': '3306',
+    }
+}
+
+Install MySQL Client:
+
+pip install mysqlclient
+
+6 Run Migrations
+python manage.py makemigrations
+python manage.py migrate
+
+7. Load Sample Data
+WhatsApp Sample Data
+The WhatsApp Inbox, Campaigns, and Automation pages use dummy/sample data for demonstration.
+You can modify the sample data in the respective views (views.py) as needed.
+Maps Sample Data
+The Maps page uses hardcoded dummy coordinates for demonstration.
+Update the maps view in views.py to change or add more locations.
+
+
+8. Stripe Integration
+a. Create a Stripe Account
+Go to https://dashboard.stripe.com/register and sign up.
+After registration, get your Publishable key and Secret key from the Developers > API keys section.
+b. Configure Stripe in Django
+Add your Stripe keys to your Django settings.py:
+
+STRIPE_PUBLISHABLE_KEY = 'pk_test_...'
+STRIPE_SECRET_KEY = 'sk_test_...'
+
+Use these keys in your payment views and templates.
+c. Stripe Usage in Project
+The project uses Stripe for subscription payments.
+When a user’s subscription expires, they are redirected to the subscription page to renew via Stripe.
+The middleware (Leads/middleware.py) enforces subscription checks.
+
+
+9. Running the Project
+
+python manage.py runserver
+
+10 . Pending Tasks
+
+Call Details: Integrate real call data (currently uses placeholders).
+WhatsApp: Integrate with a real WhatsApp API (currently uses sample data).
+Maps: Integrate with live location data or a mapping API (currently uses dummy data)
+
+13 . Notes
+
+For production, update ALLOWED_HOSTS, use environment variables for secrets, and configure static/media file hosting.
+For any issues, check the Django and MySQL logs for errors.

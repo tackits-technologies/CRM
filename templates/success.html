@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <div class="card shadow-lg">
+                <div class="card-body">
+                    <h2 class="card-title text-success mb-4">Payment Successful!</h2>
+                    <p class="card-text">Thank you for your payment. Your subscription is now active.</p>
+                    <p class="card-text">You can now access all the features of our CRM application.</p>
+                    <a href="{% url 'dashboard' %}" class="btn btn-primary mt-3">Go to Dashboard</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        border: none;
+        border-radius: 15px;
+        transition: transform 0.3s;
+    }
+    
+    .card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .btn-primary {
+        padding: 12px 30px;
+        border-radius: 30px;
+        font-weight: 600;
+    }
+    
+    .card-title {
+        font-size: 2.5rem;
+        font-weight: 600;
+        color: #10b981;
+    }
+    
+    .card-text {
+        font-size: 1.1rem;
+        color: #4b5563;
+    }
+    
+    @media (max-width: 768px) {
+        .container {
+            padding: 1rem;
+        }
+        
+        .card-title {
+            font-size: 2rem;
+        }
+        
+        .card-text {
+            font-size: 1rem;
+        }
+    }
+</style>
+{% endblock %}
